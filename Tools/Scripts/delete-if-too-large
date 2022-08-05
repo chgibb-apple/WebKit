@@ -33,7 +33,7 @@ def main():
     directoryPath = Path(directory).resolve()
 
     if not directoryPath.exists():
-        print(directory + "does not exist")
+        print(directory + " does not exist")
         return 1
 
     if not directoryPath.is_dir():
@@ -44,6 +44,8 @@ def main():
     if directoryPath.stat().st_size >= tenGigabytes:
         os.remove(directory)
         print("Deleted " + directory)
+
+    return 0
 
 
 if __name__ == '__main__':
