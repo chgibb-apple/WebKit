@@ -40,6 +40,7 @@ import requests
 import socket
 import sys
 import time
+from pathlib import Path
 
 if sys.version_info < (3, 5):
     print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
@@ -4510,6 +4511,14 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
             self.shell_command('git remote | grep -v {} | xargs -L 1 git remote rm || {}'.format(self.git_remote, self.shell_exit_0())),
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        #WebKit history is ~8.6G in size at time of writing
+        #If history has grown to occupy 10G or more, run git prune
+        gitPath = Path(".git").resolve()
+        tenGigabytes = 1024 * 1024 * 1024 * 10
+        if gitPath.stat().st_size >= tenGigabytes:
+            self.commands.append(util.ShellArg(command=['git','prune'],logname='stdio'))
+
         return super(CleanGitRepo, self).run()
 
     def getResultSummary(self):
